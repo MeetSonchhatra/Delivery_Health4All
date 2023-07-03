@@ -47,5 +47,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<String>Choose photo from Gallery.</String>
+	<key>NSCameraUsageDescription</key>
+	<String>Take photo from Camera.</String>
+	<key>NSMicrophoneUsageDescription</key>
+	<String>Used to capture audio from image picker plugin.</String>
 </dict>
 </plist>

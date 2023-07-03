@@ -89,9 +89,6 @@ class _InvoiceState extends State<Invoice> {
                         borderSide: const BorderSide(color: Colors.white))),
               ),
             ),
-            SizedBox(
-              width: 3.w,
-            ),
             IconButton(
               icon: const Icon(Icons.notifications_none_outlined),
               onPressed: () {

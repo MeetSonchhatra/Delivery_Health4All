@@ -1,9 +1,16 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../consts/colors.dart';
@@ -20,6 +27,20 @@ class DeliveryInfo extends StatefulWidget {
 }
 
 class _DeliveryInfoState extends State<DeliveryInfo> {
+ 
+  File? image;
+  Future pickImage() async {
+    try {
+      final XFile? image =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+      final imageTemporary = Image.file(File(image.path));
+      setState(() => this.image = imageTemporary as File?);
+    } on PlatformException catch (e) {
+      print('Failed to pick image $e');
+    }
+  }
+  
   int myIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -171,7 +192,7 @@ class _DeliveryInfoState extends State<DeliveryInfo> {
                                 ),
                               ),
                               SizedBox(
-                                width: 2.w,
+                                width: 1.w,
                               ),
                               Text(
                                 '9:11am',
@@ -676,4 +697,6 @@ class _DeliveryInfoState extends State<DeliveryInfo> {
       ),
     );
   }
+
+  
 }

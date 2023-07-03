@@ -1,7 +1,12 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -42,8 +47,7 @@ class _VehiInfoState extends State<VehiInfo> {
             onPressed: () {
               Navigator.of(context).pop();
             },
-          )
-          ),
+          )),
       body: Container(
         color: whiteColor,
         child: Form(
@@ -172,50 +176,46 @@ class _VehiInfoState extends State<VehiInfo> {
                 ),
                 Row(
                   children: [
-                    Expanded(
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                            contentPadding: EdgeInsets.fromLTRB(12, 2, 58, 2),
-                            suffixIcon: Padding(
-                                padding: EdgeInsets.only(
-                                    right: 20, top: 3, bottom: 3),
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    fixedSize: Size(75, 2),
-                                    elevation: 0,
-                                    backgroundColor: bordersilver,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(15),
-                                      ),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Upload',
-                                    style: TextStyle(
-                                        color: fontblack,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 10.sp),
-                                  ),
-                                )),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                borderSide:
-                                    const BorderSide(color: bordersilver))),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return "Add image";
-                          } else {
-                            return null;
-                          }
-                        },
-                        onChanged: (value) {
-                          image = value;
-                          setState(() {});
-                        },
-                      ).paddingSymmetric(horizontal: 9.w, vertical: 0.25.h),
-                    ),
+                    Container(
+                      width: 82.w,
+                      height: 5.7.h,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                              color: Color.fromRGBO(234, 233, 234, 1))),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            final result = await FilePicker.platform.pickFiles(
+                              type: FileType.custom,
+                              allowedExtensions: ['pdf'],
+                            );
+                            if (result == null) return;
+                            final file = result.files.first;
+                            openFile(file);
+                            await SaveFilepermanently(file);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: Size(75, 2),
+                            elevation: 0,
+                            backgroundColor: bordersilver,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(15),
+                              ),
+                            ),
+                          ),
+                          child: Text(
+                            'Upload',
+                            style: TextStyle(
+                                color: fontblack,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 10.sp),
+                          ),
+                        ).marginOnly(right: 4.w),
+                      ),
+                    ).marginOnly(left: 10.w)
                   ],
                 ),
                 SizedBox(
@@ -245,7 +245,8 @@ class _VehiInfoState extends State<VehiInfo> {
                       contentPadding: EdgeInsets.only(left: 10.w, top: 0.5.h),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15),
-                          borderSide: const BorderSide(color: bordersilver))),
+                          borderSide: const BorderSide(
+                              color: Color.fromRGBO(233, 234, 233, 1)))),
                   validator: (value) {
                     if (value!.isEmpty ||
                         !RegExp(r'^[A-Z]{2}\s[0-9]{2}\s[A-Z]{2}\s[0-9]{1,4}$')
@@ -290,50 +291,46 @@ class _VehiInfoState extends State<VehiInfo> {
                 ),
                 Row(
                   children: [
-                    Expanded(
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                            contentPadding: EdgeInsets.fromLTRB(12, 2, 58, 2),
-                            suffixIcon: Padding(
-                                padding: EdgeInsets.only(
-                                    right: 20, top: 3, bottom: 3),
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    fixedSize: Size(75, 2),
-                                    elevation: 0,
-                                    backgroundColor: bordersilver,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(15),
-                                      ),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Upload',
-                                    style: TextStyle(
-                                        color: fontblack,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 10.sp),
-                                  ),
-                                )),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                borderSide:
-                                    const BorderSide(color: bordersilver))),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return "Add image";
-                          } else {
-                            return null;
-                          }
-                        },
-                        onChanged: (value) {
-                          image = value;
-                          setState(() {});
-                        },
-                      ).paddingSymmetric(horizontal: 9.w, vertical: 0.25.h),
-                    ),
+                    Container(
+                      width: 82.w,
+                      height: 5.7.h,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                              color: Color.fromRGBO(234, 233, 234, 1))),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            final result = await FilePicker.platform.pickFiles(
+                              type: FileType.custom,
+                              allowedExtensions: ['pdf'],
+                            );
+                            if (result == null) return;
+                            final file = result.files.first;
+                            openFile(file);
+                            await SaveFilepermanently(file);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: Size(75, 2),
+                            elevation: 0,
+                            backgroundColor: bordersilver,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(15),
+                              ),
+                            ),
+                          ),
+                          child: Text(
+                            'Upload',
+                            style: TextStyle(
+                                color: fontblack,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 10.sp),
+                          ),
+                        ).marginOnly(right: 4.w),
+                      ),
+                    ).marginOnly(left: 10.w)
                   ],
                 ),
                 SizedBox(
@@ -367,50 +364,46 @@ class _VehiInfoState extends State<VehiInfo> {
                 ),
                 Row(
                   children: [
-                    Expanded(
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                            contentPadding: EdgeInsets.fromLTRB(12, 2, 58, 2),
-                            suffixIcon: Padding(
-                                padding: EdgeInsets.only(
-                                    right: 20, top: 3, bottom: 3),
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    fixedSize: Size(75, 2),
-                                    elevation: 0,
-                                    backgroundColor: bordersilver,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(15),
-                                      ),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Upload',
-                                    style: TextStyle(
-                                        color: fontblack,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 10.sp),
-                                  ),
-                                )),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                borderSide:
-                                    const BorderSide(color: bordersilver))),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return "Add image";
-                          } else {
-                            return null;
-                          }
-                        },
-                        onChanged: (value) {
-                          image = value;
-                          setState(() {});
-                        },
-                      ).paddingSymmetric(horizontal: 9.w, vertical: 0.25.h),
-                    ),
+                    Container(
+                      width: 82.w,
+                      height: 5.7.h,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                              color: Color.fromRGBO(234, 233, 234, 1))),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            final result = await FilePicker.platform.pickFiles(
+                              type: FileType.custom,
+                              allowedExtensions: ['pdf'],
+                            );
+                            if (result == null) return;
+                            final file = result.files.first;
+                            openFile(file);
+                            await SaveFilepermanently(file);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: Size(75, 2),
+                            elevation: 0,
+                            backgroundColor: bordersilver,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(15),
+                              ),
+                            ),
+                          ),
+                          child: Text(
+                            'Upload',
+                            style: TextStyle(
+                                color: fontblack,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 10.sp),
+                          ),
+                        ).marginOnly(right: 4.w),
+                      ),
+                    ).marginOnly(left: 10.w)
                   ],
                 ),
                 SizedBox(
@@ -444,50 +437,46 @@ class _VehiInfoState extends State<VehiInfo> {
                 ),
                 Row(
                   children: [
-                    Expanded(
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                            contentPadding: EdgeInsets.fromLTRB(12, 2, 58, 2),
-                            suffixIcon: Padding(
-                                padding: EdgeInsets.only(
-                                    right: 20, top: 3, bottom: 3),
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    fixedSize: Size(75, 2),
-                                    elevation: 0,
-                                    backgroundColor: bordersilver,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(15),
-                                      ),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Upload',
-                                    style: TextStyle(
-                                        color: fontblack,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 10.sp),
-                                  ),
-                                )),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                borderSide:
-                                    const BorderSide(color: bordersilver))),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return "Add image";
-                          } else {
-                            return null;
-                          }
-                        },
-                        onChanged: (value) {
-                          image = value;
-                          setState(() {});
-                        },
-                      ).paddingSymmetric(horizontal: 9.w, vertical: 0.25.h),
-                    ),
+                    Container(
+                      width: 82.w,
+                      height: 5.7.h,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                              color: Color.fromRGBO(234, 233, 234, 1))),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            final result = await FilePicker.platform.pickFiles(
+                              type: FileType.custom,
+                              allowedExtensions: ['pdf'],
+                            );
+                            if (result == null) return;
+                            final file = result.files.first;
+                            openFile(file);
+                            await SaveFilepermanently(file);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: Size(75, 2),
+                            elevation: 0,
+                            backgroundColor: bordersilver,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(15),
+                              ),
+                            ),
+                          ),
+                          child: Text(
+                            'Upload',
+                            style: TextStyle(
+                                color: fontblack,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 10.sp),
+                          ),
+                        ).marginOnly(right: 4.w),
+                      ),
+                    ).marginOnly(left: 10.w)
                   ],
                 ),
                 SizedBox(
@@ -521,50 +510,46 @@ class _VehiInfoState extends State<VehiInfo> {
                 ),
                 Row(
                   children: [
-                    Expanded(
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                            contentPadding: EdgeInsets.fromLTRB(12, 2, 58, 2),
-                            suffixIcon: Padding(
-                                padding: EdgeInsets.only(
-                                    right: 20, top: 3, bottom: 3),
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    fixedSize: Size(75, 2),
-                                    elevation: 0,
-                                    backgroundColor: bordersilver,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(15),
-                                      ),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Upload',
-                                    style: TextStyle(
-                                        color: fontblack,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 10.sp),
-                                  ),
-                                )),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                borderSide:
-                                    const BorderSide(color: bordersilver))),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return "Add image";
-                          } else {
-                            return null;
-                          }
-                        },
-                        onChanged: (value) {
-                          image = value;
-                          setState(() {});
-                        },
-                      ).paddingSymmetric(horizontal: 9.w, vertical: 0.25.h),
-                    ),
+                    Container(
+                      width: 82.w,
+                      height: 5.7.h,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                              color: Color.fromRGBO(234, 233, 234, 1))),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            final result = await FilePicker.platform.pickFiles(
+                              type: FileType.custom,
+                              allowedExtensions: ['pdf'],
+                            );
+                            if (result == null) return;
+                            final file = result.files.first;
+                            openFile(file);
+                            await SaveFilepermanently(file);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: Size(75, 2),
+                            elevation: 0,
+                            backgroundColor: bordersilver,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(15),
+                              ),
+                            ),
+                          ),
+                          child: Text(
+                            'Upload',
+                            style: TextStyle(
+                                color: fontblack,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 10.sp),
+                          ),
+                        ).marginOnly(right: 4.w),
+                      ),
+                    ).marginOnly(left: 10.w)
                   ],
                 ),
                 SizedBox(
@@ -680,5 +665,15 @@ class _VehiInfoState extends State<VehiInfo> {
             ),
           ]),
     ));
+  }
+
+  void openFile(PlatformFile file) {
+    OpenFile.open(file.path!);
+  }
+
+  Future<File> SaveFilepermanently(PlatformFile file) async {
+    final appstorage = await getApplicationDocumentsDirectory();
+    final newFile = File('${appstorage.path}/${file.name}');
+    return File(file.path!).copy(newFile.path);
   }
 }

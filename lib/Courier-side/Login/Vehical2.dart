@@ -1,6 +1,11 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
@@ -25,13 +30,14 @@ class _Vehical2State extends State<Vehical2> {
     QuickAlert.show(
         context: context,
         type: QuickAlertType.success,
-        text: "We have successfully verified your number.",
+        text: "You have successfully created the Account .",
         confirmBtnText: "Welcome",
         confirmBtnColor: Colors.green,
         onConfirmBtnTap: () {
           Get.to(const Home1());
         });
   }
+
   final formKey = GlobalKey<FormState>();
   String name = "";
   String password = "";
@@ -183,25 +189,13 @@ class _Vehical2State extends State<Vehical2> {
                 SizedBox(
                   height: 1.2.h,
                 ),
-                TextFormField(
-                  keyboardType: TextInputType.multiline,
-                  maxLines: 4,
-                  decoration: InputDecoration(
-                      contentPadding: EdgeInsets.only(left: 10.w, top: 0.454.h),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(50),
-                          borderSide: const BorderSide(
-                              color: Color.fromRGBO(234, 233, 234, 1)))),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Address cannot be null';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    name = value;
-                    setState(() {});
-                  },
+                Container(
+                  height: 18.h,
+                  width: 82.w,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      border:
+                          Border.all(color: Color.fromRGBO(233, 234, 233, 1))),
                 ).paddingSymmetric(horizontal: 8.14.w, vertical: 0.23.h),
                 SizedBox(
                   height: 2.h,
@@ -227,57 +221,53 @@ class _Vehical2State extends State<Vehical2> {
                 ),
                 Row(
                   children: [
-                    Expanded(
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                            contentPadding: EdgeInsets.fromLTRB(12, 2, 58, 2),
-                            suffixIcon: Padding(
-                                padding: EdgeInsets.only(
-                                    right: 20, top: 3, bottom: 3),
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    fixedSize: Size(85, 2),
-                                    elevation: 0,
-                                    backgroundColor: bordersilver,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(15),
-                                      ),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Capture',
-                                    style: TextStyle(
-                                        color: fontblack,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 10.sp),
-                                  ),
-                                )),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                borderSide:
-                                    const BorderSide(color: bordersilver))),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return "Add image";
-                          } else {
-                            return null;
-                          }
-                        },
-                        onChanged: (value) {
-                          image = value;
-                          setState(() {});
-                        },
-                      ).paddingSymmetric(horizontal: 9.w, vertical: 0.25.h),
-                    ),
+                    Container(
+                      width: 82.w,
+                      height: 5.7.h,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                              color: Color.fromRGBO(234, 233, 234, 1))),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            final result = await FilePicker.platform.pickFiles(
+                              type: FileType.custom,
+                              allowedExtensions: ['pdf'],
+                            );
+                            if (result == null) return;
+                            final file = result.files.first;
+                            openFile(file);
+                            await SaveFilepermanently(file);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: Size(75, 2),
+                            elevation: 0,
+                            backgroundColor: bordersilver,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(15),
+                              ),
+                            ),
+                          ),
+                          child: Text(
+                            'Upload',
+                            style: TextStyle(
+                                color: fontblack,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 10.sp),
+                          ),
+                        ).marginOnly(right: 4.w),
+                      ),
+                    ).marginOnly(left: 10.w)
                   ],
                 ),
                 SizedBox(
                   height: 2.h,
                 ),
                 Container(
-                  width: 70.w,
+                  width: 75.w,
                   height: 4.3.h,
                   child: Text(
                     'We will notify you once we have verified your account!',
@@ -292,7 +282,7 @@ class _Vehical2State extends State<Vehical2> {
                   ),
                 ).marginOnly(right: 18.5.w, left: 18.5.w),
                 SizedBox(
-                  height: 4.h,
+                  height: 20.h,
                 ),
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -317,5 +307,15 @@ class _Vehical2State extends State<Vehical2> {
         ),
       ),
     ));
+  }
+
+  void openFile(PlatformFile file) {
+    OpenFile.open(file.path!);
+  }
+
+  Future<File> SaveFilepermanently(PlatformFile file) async {
+    final appstorage = await getApplicationDocumentsDirectory();
+    final newFile = File('${appstorage.path}/${file.name}');
+    return File(file.path!).copy(newFile.path);
   }
 }

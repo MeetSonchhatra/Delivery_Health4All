@@ -75,7 +75,7 @@ class _ProfileDState extends State<ProfileD> {
                           color: textfieldGrey,
                           iconSize: 30,
                           onPressed: () {
-                            Get.to(const Home1());
+                            Navigator.of(context).pop();
                           },
                         ),
                         SizedBox(

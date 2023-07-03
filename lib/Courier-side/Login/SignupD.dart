@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:delivery_health4all/Courier-side/Login/OTP2.dart';
 import 'package:delivery_health4all/consts/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
 
@@ -19,6 +22,19 @@ class SignupD extends StatefulWidget {
 }
 
 class _SignupDState extends State<SignupD> {
+  File? image;
+  Future pickImage() async {
+    try {
+      final XFile? image =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+      final imageTemporary = Image.file(File(image.path));
+      setState(() => this.image = imageTemporary as File?);
+    } on PlatformException catch (e) {
+      print('Failed to pick image $e');
+    }
+  }
+
   TextEditingController fnam = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController mobile = TextEditingController();
@@ -26,7 +42,6 @@ class _SignupDState extends State<SignupD> {
   // TextEditingController pin = TextEditingController();
   TextEditingController pass = TextEditingController();
   TextEditingController photo = TextEditingController();
-
 
   bool _obscureText = true;
   void _togglePasswordVisibility() {
@@ -45,7 +60,7 @@ class _SignupDState extends State<SignupD> {
   final formKey = GlobalKey<FormState>();
   String name = "";
   String password = "";
-  String image = "";
+  String img = "";
   String confirmpassword = "";
   DateTime? _selectedDate;
   final _gender = ["Male", "Female", "Other"];
@@ -147,7 +162,7 @@ class _SignupDState extends State<SignupD> {
                     Container(
                       width: 83.w,
                       child: Text(
-                        "Sign Up to create your Health4All account to be  our Delivery Partner! ",
+                        "to create your Health4All account to be  our Delivery Partner! ",
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -503,7 +518,6 @@ class _SignupDState extends State<SignupD> {
                           borderRadius: BorderRadius.circular(15),
                           borderSide: const BorderSide(color: bordersilver))),
                 ).paddingSymmetric(horizontal: 9.w, vertical: 0.15.h),
-
                 SizedBox(
                   height: 2.h,
                 ),
@@ -546,7 +560,7 @@ class _SignupDState extends State<SignupD> {
                     if (value!.isEmpty ||
                         !RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$')
                             .hasMatch(value)) {
-                      return "Password must contain 1 upper case 1 lower case 1 numeric value and 1 special char.";
+                      return "Password must contain:\n- 1 uppercase letter\n- 1 lowercase letter\n- 1 numeric value\n- 1 special character\n- At least 8 characters in length";
                     } else {
                       return null;
                     }
@@ -579,7 +593,6 @@ class _SignupDState extends State<SignupD> {
                   height: 1.2.h,
                 ),
                 TextFormField(
-
                   obscureText: _obscureText2,
                   decoration: InputDecoration(
                       suffixIcon: GestureDetector(
@@ -637,51 +650,53 @@ class _SignupDState extends State<SignupD> {
                 ),
                 Row(
                   children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller:photo ,
-                        decoration: InputDecoration(
-                            contentPadding: EdgeInsets.fromLTRB(12, 2, 58, 2),
-                            suffixIcon: Padding(
-                                padding: EdgeInsets.only(
-                                    right: 20, top: 3, bottom: 3),
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    fixedSize: Size(75, 2),
-                                    elevation: 0,
-                                    backgroundColor: bordersilver,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(15),
-                                      ),
+                    image != null
+                        ? Container(
+                          width: 82.w,
+                          child: Center(
+                            child: ClipOval(
+                                child: Image.file(
+                                  image!,
+                                  width: 23.w,
+                                  height: 11.33.h,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                          ),
+                        ).marginOnly(left: 10.w)
+                        : Container(
+                            width: 82.w,
+                            height: 5.7.h,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                border: Border.all(
+                                    color: Color.fromRGBO(234, 233, 234, 1))),
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  pickImage();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  fixedSize: Size(75, 2),
+                                  elevation: 0,
+                                  backgroundColor: bordersilver,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(15),
                                     ),
                                   ),
-                                  child: Text(
-                                    'Upload',
-                                    style: TextStyle(
-                                        color: fontblack,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 10.sp),
-                                  ),
-                                )),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                borderSide:
-                                    const BorderSide(color: bordersilver))),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return "Add image";
-                          } else {
-                            return null;
-                          }
-                        },
-                        onChanged: (value) {
-                          image = value;
-                          setState(() {});
-                        },
-                      ).paddingSymmetric(horizontal: 9.w, vertical: 0.25.h),
-                    ),
+                                ),
+                                child: Text(
+                                  'Upload',
+                                  style: TextStyle(
+                                      color: fontblack,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 10.sp),
+                                ),
+                              ).marginOnly(right: 4.w),
+                            ),
+                          ).marginOnly(left: 10.w)
                   ],
                 ),
                 SizedBox(
@@ -726,7 +741,15 @@ class _SignupDState extends State<SignupD> {
                     ),
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
-                        Get.to(OTP2(fnam: fnam.toString(), email: email.toString(), phone: mobile.toString(), dob: _selectedDate.toString(), gender: _selectedVal.toString(), addres: _selectedCity.toString(), password: pass.toString(), photo: photo.toString()));
+                        Get.to(OTP2(
+                            fnam: fnam.toString(),
+                            email: email.toString(),
+                            phone: mobile.toString(),
+                            dob: _selectedDate.toString(),
+                            gender: _selectedVal.toString(),
+                            addres: _selectedCity.toString(),
+                            password: pass.toString(),
+                            photo: photo.toString()));
                       }
                     },
                     child: const Text('Register')),
